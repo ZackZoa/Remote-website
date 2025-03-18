@@ -1,0 +1,24 @@
+{
+  "name": "remote-website",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZackZoa/Remote-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/ZackZoa/Remote-website/issues"
+  },
+  "homepage": "https://github.com/ZackZoa/Remote-website#readme",
+  "description": "",
+  "dependencies": {
+    "ws": "^8.18.1"
+  }
+}
