@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>2D Cube Jumper</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+    <div id="player"></div>
+    <div id="platforms"></div>
+  </div>
+  <div id="score">Score: 0</div>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3000');
+    const player = document.getElementById('player');
+    const platformsContainer = document.getElementById('platforms');
+    const scoreDisplay = document.getElementById('score');
+
+    let playerY = 0;
+    let playerX = 50;
+    let velocityY = 0;
+    let gravity = 0.5;
+    let isJumping = false;
+    let score = 0;
+    let platforms = [];
+
+    function generatePlatforms() {
+      platformsContainer.innerHTML = '';
+      platforms = [];
+      for (let i = 0; i < 5; i++) {
+        const platform = document.createElement('div');
+        platform.className = 'platform';
+        const platformX = Math.random() * 300;
+        const platformY = 100 + (i * 120);
+        platform.style.left = `${platformX}px`;
+        platform.style.top = `${platformY}px`;
+        platformsContainer.appendChild(platform);
+        platforms.push({ x: platformX, y: platformY, width: 80 });
+      }
+    }
+
+    function checkCollision() {
+      for (const platform of platforms) {
+        if (
+          playerX + 30 > platform.x &&
+          playerX < platform.x + platform.width &&
+          playerY + 30 >= platform.y &&
+          playerY < platform.y &&
+          velocityY >= 0
+        ) {
+          playerY = platform.y - 30;
+          velocityY = 0;
+          isJumping = false;
+          score += 10;
+          scoreDisplay.textContent = `Score: ${score}`;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function gameLoop() {
+      velocityY += gravity;
+      playerY += velocityY;
+
+      if (playerY > 500) {
+        playerY = 0;
+        generatePlatforms();
+      }
+
+      player.style.top = `${playerY}px`;
+      player.style.left = `${playerX}px`;
+
+      checkCollision();
+      requestAnimationFrame(gameLoop);
+    }
+
+    socket.onmessage = (event) => {
+      const { action, state } = JSON.parse(event.data);
+      if (action === 'left') playerX -= state ? 10 : 0;
+      if (action === 'right') playerX += state ? 10 : 0;
+      if (action === 'jump' && !isJumping) {
+        velocityY = -12;
+        isJumping = true;
+      }
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') playerX -= 10;
+      if (e.key === 'ArrowRight') playerX += 10;
+      if (e.key === ' ' && !isJumping) {
+        velocityY = -12;
+        isJumping = true;
+      }
+    });
+
+    generatePlatforms();
+    gameLoop();
+  </script>
+</body>
+</html>

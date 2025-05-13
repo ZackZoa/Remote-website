@@ -1,15 +1,29 @@
-import WebSocket, {WebSocketServer} from "ws";
+import { WebSocketServer } from 'ws';
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const wss = new WebSocketServer({ port: 8080 });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-wss.on('connection', ws => {
-  console.log('Client connected');
+const app = express();
+const PORT = 3000;
 
-  ws.on('message', message => {
-    console.log(`Received: ${message}`);
-    wss.clients.forEach(client => {
+app.use(express.static(path.join(__dirname, 'public')));
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws) => {
+  console.log('New client connected');
+
+  ws.on('message', (message) => {
+    wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(`Server: ${message}`);
+        client.send(message.toString());
       }
     });
   });
@@ -18,5 +32,3 @@ wss.on('connection', ws => {
     console.log('Client disconnected');
   });
 });
-
-console.log('WebSocket server started on port 8080');

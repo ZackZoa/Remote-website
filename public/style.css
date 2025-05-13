@@ -1,0 +1,50 @@
+#game-container {
+  width: 400px;
+  height: 500px;
+  background: #f0f0f0;
+  position: relative;
+  overflow: hidden;
+  margin: 20px auto;
+}
+
+#player {
+  width: 30px;
+  height: 30px;
+  background: #4CAF50;
+  position: absolute;
+  top: 0;
+  left: 50px;
+}
+
+.platform {
+  width: 80px;
+  height: 15px;
+  background: #3498db;
+  position: absolute;
+}
+
+#score {
+  text-align: center;
+  font-size: 24px;
+}
+
+.controller {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.controller button {
+  padding: 15px 25px;
+  font-size: 20px;
+  border: none;
+  background: #333;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.controller button:active {
+  background: #555;
+}
